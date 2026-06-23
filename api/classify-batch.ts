@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const apiKey = process.env.GEMINI_API_KEY;
-
 const wasteSchema = {
   type: Type.OBJECT,
   properties: {
@@ -91,7 +89,7 @@ Also estimate:
 ` If the image does not show any clear waste item, or is completely unrelated, return 'Non-Recyclable' with a lower confidence score (e.g. 0.45), brief negative reasoning, and indicate 'unrecognized object' or 'unclear entity' in the detected items.`;
 
 function getClient(userApiKey?: string) {
-  const activeKey = userApiKey?.trim() || apiKey;
+  const activeKey = userApiKey?.trim() || process.env.GEMINI_API_KEY;
   if (!activeKey) {
     throw new Error("No Gemini API key found. Please configure GEMINI_API_KEY in secrets or enter a custom key in the setup section.");
   }

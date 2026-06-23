@@ -3,7 +3,20 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const apiKey = process.env.GEMINI_API_KEY;
+function getClient(userApiKey?: string) {
+  const activeKey = userApiKey?.trim() || process.env.GEMINI_API_KEY;
+  if (!activeKey) {
+    throw new Error("No Gemini API key found. Please configure GEMINI_API_KEY in secrets or enter a custom key in the setup section.");
+  }
+  return new GoogleGenAI({
+    apiKey: activeKey,
+    httpOptions: {
+      headers: {
+        'User-Agent': userApiKey?.trim() ? 'aistudio-build-custom' : 'aistudio-build',
+      }
+    }
+  });
+}
 
 const wasteSchema = {
   type: Type.OBJECT,
@@ -89,21 +102,6 @@ Also estimate:
 6. Exactly 3 practical, action-driven reuse or upcycling ideas for this item before discarding.
 7. A brief India-specific local disposal note mentioning bin colours used in Indian municipalities (or specific organisations like Karo Sambhav, Swachh Bharat, local kabadiwalas, etc.).` +
 ` If the image does not show any clear waste item, or is completely unrelated, return 'Non-Recyclable' with a lower confidence score (e.g. 0.45), brief negative reasoning, and indicate 'unrecognized object' or 'unclear entity' in the detected items.`;
-
-function getClient(userApiKey?: string) {
-  const activeKey = userApiKey?.trim() || apiKey;
-  if (!activeKey) {
-    throw new Error("No Gemini API key found. Please configure GEMINI_API_KEY in secrets or enter a custom key in the setup section.");
-  }
-  return new GoogleGenAI({
-    apiKey: activeKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': userApiKey?.trim() ? 'aistudio-build-custom' : 'aistudio-build',
-      }
-    }
-  });
-}
 
 function parseBody(req: any): any {
   if (!req) return {};

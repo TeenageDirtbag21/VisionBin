@@ -252,6 +252,8 @@ app.post("/api/classify-batch", async (req, res) => {
   }
 });
 
+const isVercel = process.env.VERCEL === "1" || !!process.env.NOW_REGION;
+
 // Configure Vite or Serve static built content
 async function setupRouting() {
   if (process.env.NODE_ENV !== "production") {
@@ -274,4 +276,8 @@ async function setupRouting() {
   });
 }
 
-setupRouting();
+if (!isVercel) {
+  setupRouting();
+}
+
+export default app;

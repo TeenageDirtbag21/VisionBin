@@ -104,3 +104,18 @@ export function getClient(userApiKey?: string) {
     }
   });
 }
+
+export function parseBody(req: any): any {
+  if (!req) return {};
+  if (req.body) {
+    if (typeof req.body === "string") {
+      try {
+        return JSON.parse(req.body);
+      } catch (e) {
+        return {};
+      }
+    }
+    return req.body;
+  }
+  return {};
+}

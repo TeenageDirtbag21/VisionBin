@@ -1,4 +1,4 @@
-import { getClient, PROMPT_INSTRUCTION, wasteSchema } from "./_lib/gemini";
+import { getClient, PROMPT_INSTRUCTION, wasteSchema, parseBody } from "./_lib/gemini";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
@@ -7,7 +7,8 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { images, userApiKey } = req.body || {}; // images:Array<{imageBase64, mimeType}>
+    const body = parseBody(req);
+    const { images, userApiKey } = body || {}; // images:Array<{imageBase64, mimeType}>
 
     if (!images || !Array.isArray(images) || images.length === 0) {
       return res.status(400).json({ error: "Missing images array" });
